@@ -121,7 +121,7 @@ export function KeyObsessions() {
               </div>
             )}
 
-            {keyObsessions?.visionaryPipeline.dealsInNegotiation.length > 0 && (
+            {(keyObsessions?.visionaryPipeline?.dealsInNegotiation?.length ?? 0) > 0 && (
               <div>
                 <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Deals in Negotiation
@@ -160,7 +160,7 @@ export function KeyObsessions() {
           badge={keyObsessions?.conceptValidation.brandsInValidation.length || 0}
         >
           <div className="space-y-4">
-            {keyObsessions?.conceptValidation.brandsInValidation.length > 0 ? (
+            {(keyObsessions?.conceptValidation?.brandsInValidation?.length ?? 0) > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2">
                 {keyObsessions.conceptValidation.brandsInValidation.map((brand) => (
                   <div
@@ -239,7 +239,7 @@ export function KeyObsessions() {
               )}
             </div>
 
-            {keyObsessions?.speedToBreakeven.currentLaunches.length > 0 && (
+            {(keyObsessions?.speedToBreakeven?.currentLaunches?.length ?? 0) > 0 && (
               <div>
                 <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   Current Launches
@@ -333,7 +333,7 @@ export function KeyObsessions() {
               </div>
             </div>
 
-            {keyObsessions?.roasAndLtv.brandBreakdown.length > 0 && (
+            {(keyObsessions?.roasAndLtv?.brandBreakdown?.length ?? 0) > 0 && (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
