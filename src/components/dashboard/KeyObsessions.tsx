@@ -24,7 +24,7 @@ interface AccordionSectionProps {
   icon: React.ComponentType<{ className?: string }>
   children: React.ReactNode
   badge?: string | number
-  badgeVariant?: 'default' | 'success' | 'warning' | 'danger'
+  badgeVariant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
 }
 
 function AccordionSection({
