@@ -11,7 +11,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { HealthScore } from '@/components/brands/HealthScore'
 import { MetricCard } from '@/components/brands/MetricCard'
 import { MetricsChart } from '@/components/brands/MetricsChart'
-import { AIBriefing } from '@/components/brands/AIBriefing'
 import { ThisWeekFocus } from '@/components/brands/ThisWeekFocus'
 import { DecisionTimeline } from '@/components/brands/DecisionTimeline'
 import { NotesSection } from '@/components/brands/NotesSection'
@@ -294,18 +293,13 @@ export default function BrandWarRoomPage() {
         <MetricsChart metrics={brand.metrics} />
       </motion.div>
 
-      {/* AI Briefing & This Week's Focus */}
+      {/* This Week's Focus */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8"
+        className="mb-8"
       >
-        <AIBriefing
-          brandId={brand.id}
-          brandData={brand}
-          metrics={brand.metrics}
-        />
         <ThisWeekFocus
           brandId={brand.id}
           initialFocus={brand.thisWeekFocus}
