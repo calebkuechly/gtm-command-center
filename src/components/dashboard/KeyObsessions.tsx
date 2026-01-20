@@ -127,7 +127,7 @@ export function KeyObsessions() {
                   Deals in Negotiation
                 </p>
                 <div className="space-y-2">
-                  {keyObsessions.visionaryPipeline.dealsInNegotiation.map((deal) => (
+                  {keyObsessions?.visionaryPipeline?.dealsInNegotiation?.map((deal) => (
                     <div
                       key={deal.id}
                       className="flex items-center justify-between rounded-lg border border-gray-100 p-3 dark:border-gray-800"
@@ -162,7 +162,7 @@ export function KeyObsessions() {
           <div className="space-y-4">
             {(keyObsessions?.conceptValidation?.brandsInValidation?.length ?? 0) > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2">
-                {keyObsessions.conceptValidation.brandsInValidation.map((brand) => (
+                {keyObsessions?.conceptValidation?.brandsInValidation?.map((brand) => (
                   <div
                     key={brand.id}
                     className="rounded-lg border border-gray-100 p-3 dark:border-gray-800"
@@ -245,7 +245,7 @@ export function KeyObsessions() {
                   Current Launches
                 </p>
                 <div className="space-y-2">
-                  {keyObsessions.speedToBreakeven.currentLaunches.map((launch) => {
+                  {keyObsessions?.speedToBreakeven?.currentLaunches?.map((launch) => {
                     const progress = Math.min(
                       100,
                       (launch.daysElapsed / launch.targetDays) * 100
@@ -350,7 +350,7 @@ export function KeyObsessions() {
                     </tr>
                   </thead>
                   <tbody>
-                    {keyObsessions.roasAndLtv.brandBreakdown.slice(0, 5).map((brand) => (
+                    {keyObsessions?.roasAndLtv?.brandBreakdown?.slice(0, 5).map((brand) => (
                       <tr
                         key={brand.brandName}
                         className="border-b border-gray-50 dark:border-gray-800/50"
