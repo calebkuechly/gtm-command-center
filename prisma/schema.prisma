@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Application Models
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts   Account[]
+  sessions   Session[]
+  priorities Priority[]
+  alerts     Alert[]
+
+  @@index([email])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  DIRECTOR
+}
+
+model Brand {
+  id                 String      @id @default(cuid())
+  name               String
+  logoUrl            String?
+  visionaryId        String?
+  launchDate         DateTime?
+  stage              BrandStage  @default(IDEATION)
+  status             BrandStatus @default(ON_TRACK)
+  monthlyRevenue     Decimal     @default(0) @db.Decimal(12, 2)
+  monthlyProfit      Decimal     @default(0) @db.Decimal(12, 2)
+  contributionMargin Decimal     @default(0) @db.Decimal(5, 2)
+  frontEndRoas       Decimal     @default(0) @db.Decimal(5, 2)
+  backEndLtv         Decimal     @default(0) @db.Decimal(12, 2)
+  targetRevenue      Decimal     @default(0) @db.Decimal(12, 2)
+  targetMargin       Decimal     @default(20) @db.Decimal(5, 2)
+  thisWeekFocus      String?     @db.Text
+  daysToBreakeven    Int?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  visionary Visionary? @relation(fields: [visionaryId], references: [id])
+  metrics   Metric[]
+  decisions Decision[]
+
+  @@index([stage])
+  @@index([status])
+  @@index([visionaryId])
+}
+
+enum BrandStage {
+  IDEATION
+  TESTING
+  LAUNCH
+  SCALE
+  PORTFOLIO
+  HOUSE
+}
+
+enum BrandStatus {
+  ON_TRACK
+  NEEDS_ATTENTION
+  CRITICAL
+}
+
+model Visionary {
+  id             String          @id @default(cuid())
+  name           String
+  email          String?
+  phone          String?
+  company        String?
+  industry       String?
+  stage          VisionaryStage  @default(INITIAL_CONTACT)
+  nextAction     String?         @db.Text
+  nextActionDate DateTime?
+  notes          String?         @db.Text
+  avatarUrl      String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  brands Brand[]
+
+  @@index([stage])
+}
+
+enum VisionaryStage {
+  INITIAL_CONTACT
+  DISCOVERY
+  PROPOSAL
+  NEGOTIATION
+  SIGNED
+  PASSED
+}
+
+model Metric {
+  id         String     @id @default(cuid())
+  brandId    String?
+  metricType MetricType
+  value      Decimal    @db.Decimal(12, 2)
+  date       DateTime   @db.Date
+  createdAt  DateTime   @default(now())
+
+  brand Brand? @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+  @@index([metricType])
+  @@index([date])
+}
+
+enum MetricType {
+  REVENUE
+  PROFIT
+  LEADS
+  CPA
+  CLOSE_RATE
+  ROAS
+  LTV
+  AD_SPEND
+}
+
+model Priority {
+  id            String    @id @default(cuid())
+  userId        String
+  title         String
+  description   String?   @db.Text
+  dayOfWeek     DayOfWeek
+  weekStartDate DateTime  @db.Date
+  completed     Boolean   @default(false)
+  order         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([weekStartDate])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model Contact {
+  id            String          @id @default(cuid())
+  name          String
+  role          String?
+  category      ContactCategory
+  email         String?
+  phone         String?
+  avatarUrl     String?
+  isFavorite    Boolean         @default(false)
+  lastContacted DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([category])
+  @@index([isFavorite])
+}
+
+enum ContactCategory {
+  EXECUTIVE
+  TEAM
+  PARTNER
+}
+
+model Decision {
+  id           String       @id @default(cuid())
+  brandId      String
+  decisionType DecisionType
+  decisionDate DateTime     @db.Date
+  reasoning    String?      @db.Text
+  createdAt    DateTime     @default(now())
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+  @@index([decisionType])
+}
+
+enum DecisionType {
+  KEEP
+  PASS
+  TRANSITION_HOUSE
+}
+
+model Alert {
+  id        String    @id @default(cuid())
+  userId    String
+  type      AlertType
+  title     String
+  message   String    @db.Text
+  isRead    Boolean   @default(false)
+  priority  Int       @default(0)
+  metadata  Json?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+enum AlertType {
+  REVENUE_DROP
+  CPA_HIGH
+  CLOSE_RATE_LOW
+  DECISION_DUE
+  FOLLOWUP_OVERDUE
+  MILESTONE_REACHED
+  SYSTEM
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  targetDate  DateTime @db.Date
+  targetValue Decimal? @db.Decimal(12, 2)
+  currentValue Decimal? @db.Decimal(12, 2)
+  isCompleted Boolean  @default(false)
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Budget {
+  id          String   @id @default(cuid())
+  category    String
+  allocated   Decimal  @db.Decimal(12, 2)
+  spent       Decimal  @default(0) @db.Decimal(12, 2)
+  fiscalYear  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([category, fiscalYear])
+}
