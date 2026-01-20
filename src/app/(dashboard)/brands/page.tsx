@@ -1,7 +1,8 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { Building2, TrendingUp, TrendingDown, DollarSign, Target, Clock } from 'lucide-react'
+import Link from 'next/link'
+import { Building2, TrendingUp, TrendingDown, DollarSign, Target, Clock, ArrowRight } from 'lucide-react'
 import { cn, formatCurrency, formatNumber } from '@/lib/utils'
 
 interface Brand {
@@ -116,20 +117,26 @@ export default function BrandsPage() {
       {/* Brands Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {brands?.map((brand) => (
-          <div
+          <Link
             key={brand.id}
-            className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+            href={`/brands/${brand.id}`}
+            className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-violet-300 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-violet-700"
           >
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">{brand.name}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                  {brand.name}
+                </h3>
                 {brand.visionary && (
                   <p className="text-sm text-gray-500 dark:text-gray-400">by {brand.visionary.name}</p>
                 )}
               </div>
-              <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', stageColors[brand.stage])}>
-                {brand.stage}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', stageColors[brand.stage])}>
+                  {brand.stage}
+                </span>
+                <ArrowRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -172,7 +179,7 @@ export default function BrandsPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -61,6 +61,7 @@ model User {
   sessions   Session[]
   priorities Priority[]
   alerts     Alert[]
+  notes      Note[]
 
   @@index([email])
 }
@@ -291,4 +292,24 @@ model Budget {
   updatedAt   DateTime @updatedAt
 
   @@unique([category, fiscalYear])
+}
+
+model Note {
+  id         String     @id @default(cuid())
+  userId     String
+  entityType EntityType
+  entityId   String
+  content    String     @db.Text
+  createdAt  DateTime   @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([entityType, entityId])
+  @@index([userId])
+}
+
+enum EntityType {
+  BRAND
+  VISIONARY
+  PRIORITY
 }
